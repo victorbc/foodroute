@@ -1,18 +1,6 @@
 package br.edu.ufcg.empsoft.foodroute.utilis;
 
-import android.os.AsyncTask;
-import android.text.Html;
-import android.util.JsonReader;
 import android.util.Log;
-
-/*import com.moolajoo.joao.popularmoviesstage2.BuildConfig;
-import com.moolajoo.joao.popularmoviesstage2.Constants;
-import com.moolajoo.joao.popularmoviesstage2.MovieDetail_Activity;
-import com.moolajoo.joao.popularmoviesstage2.MovieFragment;*/
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,8 +9,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
 public class API {
 
@@ -79,33 +65,32 @@ public class API {
         return jsonStr;
     }
 
-    private static String gpsCoordinateToURL(ArrayList<Coordinate> coordinates) {
+    private static String locationsToURL(ArrayList<String> locations) {
         String url = "";
-        if (coordinates.size() >= 1) {
+        if (locations.size() >= 1) {
             url = "https://maps.googleapis.com/maps/api/directions/json?origin=" +
-                    coordinates.get(0).toString() +
+                    locations.get(0).replace(" ", "+") +
                     "&destination=" +
-                    coordinates.get(0).toString() +
+                    locations.get(0).replace(" ", "+") +
                     "&waypoints=optimize:true";
         }
 
-        for (int i = 1; i < coordinates.size(); i++) {
-            url += "|" + coordinates.get(i).toString();
+        for (int i = 1; i < locations.size(); i++) {
+            url += "|" + locations.get(i).replace(" ", "+");
         }
         return url;
     }
 
     public static void main(String[] args) {
         try{
+            ArrayList<String> locations = new ArrayList<String>();
+            locations.add("Rua Aprígio Veloso, 161, Campina Grande");
+            locations.add("Avenida Almirante Barroso, 641, Campina Grande");
+            locations.add("Rua Sebastião Donato, 15, Campina Grande");
+            locations.add("Rua João Florentino de Carvalho, 1872, Campina Grande");
+            locations.add("Rua Janúncio Ferreira, 230, Campina Grande");
 
-            ArrayList<Coordinate> coords = new ArrayList<Coordinate>();
-            coords.add(new Coordinate(-7.217017,-35.908118));
-            coords.add(new Coordinate(-7.236044,-35.896738));
-            coords.add(new Coordinate(-7.220680,-35.888814));
-            coords.add(new Coordinate(-7.223283,-35.876996));
-            coords.add(new Coordinate(-7.213034,-35.883710));
-
-            String URLPath = gpsCoordinateToURL(coords);
+            String URLPath = locationsToURL(locations);
 
             System.out.println(URLPath);
 
