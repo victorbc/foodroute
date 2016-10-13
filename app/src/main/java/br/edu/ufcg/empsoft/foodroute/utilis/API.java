@@ -81,6 +81,23 @@ public class API {
         return url;
     }
 
+    private static String orderLocationsToUrl(ArrayList<String> locations, int[] order) {
+        String url = "";
+        if (locations.size() >= 1) {
+            url = "https://www.google.com.br/maps/dir/" +
+                    locations.get(0).replace(" ", "+");
+        }
+
+        for (int i = 1; i < locations.size(); i++) {
+            url += "/" + locations.get(i).replace(" ", "+");
+        }
+
+        if (locations.size() >= 1) {
+            url += "/" + locations.get(0).replace(" ", "+");
+        }
+        return url;
+    }
+
     public static void main(String[] args) {
         try{
             ArrayList<String> locations = new ArrayList<String>();
@@ -95,6 +112,10 @@ public class API {
             System.out.println(URLPath);
 
             System.out.println(request(URLPath));
+
+            int[] order = {3, 2, 0, 1};
+            System.out.println(orderLocationsToUrl(locations, order));
+
         } catch (Exception e) {
             Log.e("LOG", e.getMessage());
         }
