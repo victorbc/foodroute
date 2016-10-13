@@ -2,6 +2,9 @@ package br.edu.ufcg.empsoft.foodroute.utilis;
 
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -99,7 +102,7 @@ public class API {
     }
 
     public static void main(String[] args) {
-        try{
+        try {
             ArrayList<String> locations = new ArrayList<String>();
             locations.add("Rua Aprígio Veloso, 161, Campina Grande");
             locations.add("Avenida Almirante Barroso, 641, Campina Grande");
@@ -111,12 +114,20 @@ public class API {
 
             System.out.println(URLPath);
 
-            System.out.println(request(URLPath));
+            String jsonString = request(URLPath);
+            System.out.println(jsonString);
+
+            JSONObject jsonObject = new JSONObject(jsonString);
+
+            JSONArray jsonArray = jsonObject.getJSONObject("routes").getJSONArray("waypoint_order");
+
+            System.out.println(jsonArray.toString());
 
             int[] order = {3, 2, 0, 1};
             System.out.println(orderLocationsToUrl(locations, order));
 
         } catch (Exception e) {
+            e.printStackTrace();
             Log.e("LOG", e.getMessage());
         }
     }
