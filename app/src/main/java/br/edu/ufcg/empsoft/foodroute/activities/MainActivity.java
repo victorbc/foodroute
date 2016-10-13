@@ -1,4 +1,4 @@
-package br.edu.ufcg.empsoft.foodroute;
+package br.edu.ufcg.empsoft.foodroute.activities;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -19,6 +19,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
+
+import br.edu.ufcg.empsoft.foodroute.R;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback  {
