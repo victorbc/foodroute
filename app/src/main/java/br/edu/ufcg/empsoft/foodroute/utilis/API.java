@@ -2,9 +2,6 @@ package br.edu.ufcg.empsoft.foodroute.utilis;
 
 import android.util.Log;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,10 +9,12 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.JSONArray;
 
 public class API {
-
-    public static String request(String path) {
+    private static String request(String path) {
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
 
@@ -84,7 +83,7 @@ public class API {
         return url;
     }
 
-    private static String orderLocationsToUrl(ArrayList<String> locations, int[] order) {
+    private static String orderLocationsToUrl(ArrayList<String> locations, JSONArray order) {
         String url = "";
         if (locations.size() >= 1) {
             url = "https://www.google.com.br/maps/dir/" +
@@ -101,34 +100,36 @@ public class API {
         return url;
     }
 
-    public static void main(String[] args) {
+    public static String locationsToGoogleMaps(ArrayList<String> locations) {
         try {
-            ArrayList<String> locations = new ArrayList<String>();
-            locations.add("Rua Aprígio Veloso, 161, Campina Grande");
-            locations.add("Avenida Almirante Barroso, 641, Campina Grande");
-            locations.add("Rua Sebastião Donato, 15, Campina Grande");
-            locations.add("Rua João Florentino de Carvalho, 1872, Campina Grande");
-            locations.add("Rua Janúncio Ferreira, 230, Campina Grande");
-
+            // Get URL Path
             String URLPath = locationsToURL(locations);
-
             System.out.println(URLPath);
 
+            // Make Request
             String jsonString = request(URLPath);
             System.out.println(jsonString);
 
-            JSONObject jsonObject = new JSONObject(jsonString);
-
-            JSONArray jsonArray = jsonObject.getJSONObject("routes").getJSONArray("waypoint_order");
-
+            // Cast JSON String do Object
+            JSONObject jsonObject = (JSONObject) new JSONParser().parse(jsonString);
+            JSONArray jsonArray = (JSONArray) ((JSONObject)(((JSONArray) jsonObject.get("routes")).get(0))).get("waypoint_order");
             System.out.println(jsonArray.toString());
 
-            int[] order = {3, 2, 0, 1};
-            System.out.println(orderLocationsToUrl(locations, order));
-
+            // Return Google Map URL
+            return orderLocationsToUrl(locations, jsonArray);
         } catch (Exception e) {
-            e.printStackTrace();
-            Log.e("LOG", e.getMessage());
+            return null;
         }
+    }
+
+    public static void main(String[] args) {
+        ArrayList<String> locations = new ArrayList<String>();
+        locations.add("Rua Aprígio Veloso, 161, Campina Grande");
+        locations.add("Avenida Almirante Barroso, 641, Campina Grande");
+        locations.add("Rua Sebastião Donato, 15, Campina Grande");
+        locations.add("Rua João Florentino de Carvalho, 1872, Campina Grande");
+        locations.add("Rua Janúncio Ferreira, 230, Campina Grande");
+
+        System.out.println(locationsToGoogleMaps(locations));
     }
 }
