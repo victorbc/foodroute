@@ -9,6 +9,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.JSONArray;
@@ -83,6 +85,17 @@ public class API {
         return url;
     }
 
+    public static String locationsToIntentURL(List<String> locations) {
+        String url = "http://www.google.com.br/maps/dir/";
+
+
+        for (int i = 0; i < locations.size(); i++) {
+            url += locations.get(i).replace(" ", "+") + "/";
+        }
+        return url;
+    }
+
+
     private static String orderLocationsToUrl(ArrayList<String> locations, JSONArray order) {
         String url = "";
         if (locations.size() >= 1) {
@@ -112,7 +125,7 @@ public class API {
 
             // Cast JSON String do Object
             JSONObject jsonObject = (JSONObject) new JSONParser().parse(jsonString);
-            JSONArray jsonArray = (JSONArray) ((JSONObject)(((JSONArray) jsonObject.get("routes")).get(0))).get("waypoint_order");
+            JSONArray jsonArray = (JSONArray) ((JSONObject) (((JSONArray) jsonObject.get("routes")).get(0))).get("waypoint_order");
             System.out.println(jsonArray.toString());
 
             // Return Google Map URL
