@@ -1,8 +1,11 @@
 package br.edu.ufcg.empsoft.foodroute.activities;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -27,13 +31,14 @@ public class MainActivity extends AppCompatActivity
 
     private GoogleMap mMap;
 
+    //MenuItem mi;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -49,6 +54,18 @@ public class MainActivity extends AppCompatActivity
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        /*mi = (MenuItem) findViewById(R.id.nav_route);
+
+        mi.setOnMenuItemClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                        Uri.parse("https://www.google.com.br/maps/dir/Rua+Aprígio+Veloso,+161,+Campina+Grande/Avenida+Almirante+Barroso,+641,+Campina+Grande/Rua+Sebastião+Donato,+15,+Campina+Grande/Rua+João+Florentino+de+Carvalho,+1872,+Campina+Grande/Rua+Janúncio+Ferreira,+230,+Campina+Grande/Rua+Aprígio+Veloso,+161,+Campina+Grande")
+                );
+                startActivity(intent);
+            }
+        });*/
+
     }
 
     @Override
@@ -99,6 +116,21 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_route) {
 
+            /*ArrayList<String> locations = new ArrayList<String>();
+            locations.add("Rua Aprígio Veloso, 161, Campina Grande");
+            locations.add("Avenida Almirante Barroso, 641, Campina Grande");
+            locations.add("Rua Sebastião Donato, 15, Campina Grande");
+            locations.add("Rua João Florentino de Carvalho, 1872, Campina Grande");
+            locations.add("Rua Janúncio Ferreira, 230, Campina Grande");
+
+            String mapsPath = locationsToGoogleMaps(locations);*/
+
+            Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                    //Uri.parse("mapsPath");
+                    Uri.parse("https://www.google.com.br/maps/dir/Rua+Aprígio+Veloso,+161,+Campina+Grande/Avenida+Almirante+Barroso,+641,+Campina+Grande/Rua+Sebastião+Donato,+15,+Campina+Grande/Rua+João+Florentino+de+Carvalho,+1872,+Campina+Grande/Rua+Janúncio+Ferreira,+230,+Campina+Grande/Rua+Aprígio+Veloso,+161,+Campina+Grande")
+            );
+            startActivity(intent);
+            return true;
         } else if (id == R.id.nav_history) {
 
         }
@@ -126,4 +158,14 @@ public class MainActivity extends AppCompatActivity
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
+
+    /*View.OnClickListener myOnlyhandler = new View.OnClickListener() {
+        public void onClick(View v) {
+            switch(v.getId()) {
+                case R.id.nav_route:
+                    // it was the first button
+                    break;
+            }
+        }
+    };*/
 }
