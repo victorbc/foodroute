@@ -186,6 +186,21 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_route) {
 
+            /*ArrayList<String> locations = new ArrayList<String>();
+            locations.add("Rua Aprígio Veloso, 161, Campina Grande");
+            locations.add("Avenida Almirante Barroso, 641, Campina Grande");
+            locations.add("Rua Sebastião Donato, 15, Campina Grande");
+            locations.add("Rua João Florentino de Carvalho, 1872, Campina Grande");
+            locations.add("Rua Janúncio Ferreira, 230, Campina Grande");
+
+            String mapsPath = locationsToGoogleMaps(locations);*/
+
+            Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                    //Uri.parse("mapsPath");
+                    Uri.parse("https://www.google.com.br/maps/dir/Rua+Aprígio+Veloso,+161,+Campina+Grande/Avenida+Almirante+Barroso,+641,+Campina+Grande/Rua+Sebastião+Donato,+15,+Campina+Grande/Rua+João+Florentino+de+Carvalho,+1872,+Campina+Grande/Rua+Janúncio+Ferreira,+230,+Campina+Grande/Rua+Aprígio+Veloso,+161,+Campina+Grande")
+            );
+            startActivity(intent);
+            return true;
         } else if (id == R.id.nav_history) {
 
         }

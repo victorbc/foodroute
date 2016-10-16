@@ -131,6 +131,7 @@ public class API {
             // Return Google Map URL
             return orderLocationsToUrl(locations, jsonArray);
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }
