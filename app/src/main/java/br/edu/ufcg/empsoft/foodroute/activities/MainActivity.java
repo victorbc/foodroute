@@ -3,22 +3,20 @@ package br.edu.ufcg.empsoft.foodroute.activities;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.location.Location;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.util.DebugUtils;
-import android.util.Log;
-import android.view.View;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -26,6 +24,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -35,19 +35,17 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.OnMapReadyCallback;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
 
 import br.edu.ufcg.empsoft.foodroute.R;
-import br.edu.ufcg.empsoft.foodroute.interfaces.IAPICallback;
 import br.edu.ufcg.empsoft.foodroute.utilis.API;
 
 public class MainActivity extends AppCompatActivity
@@ -60,6 +58,9 @@ public class MainActivity extends AppCompatActivity
     private Marker mCurrLocationMarker;
     private List<Marker> markers;
     private View btGo;
+    private View btExpand;
+    private View btColapse;
+    private View gradient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +69,10 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -80,7 +85,17 @@ public class MainActivity extends AppCompatActivity
         navigationView.setItemIconTintList(null);
 
         markers = new ArrayList<>();
+
+        gradient = findViewById(R.id.gradient);
+
+        btExpand = findViewById(R.id.bt_expand);
+        btColapse = findViewById(R.id.bt_colapse);
+
+        btExpand.setOnClickListener(expandColapse);
+        btColapse.setOnClickListener(expandColapse);
+
         btGo = findViewById(R.id.bt_go);
+        btGo.setVisibility(View.INVISIBLE);
         btGo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -193,6 +208,20 @@ public class MainActivity extends AppCompatActivity
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        mMap.getUiSettings().setMapToolbarEnabled(false);
+
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                markers.remove(marker);
+                mMap.clear();
+                for (int i = 0; i < markers.size(); i++) {
+                    addMaker(markers.get(i).getPosition(), false, i + 1);
+                }
+                return false;
+            }
+        });
+
         // Add a marker in Sydney and move the camera
         LatLng ufcg = new LatLng(-14.495849, -51.328125);
         //mMap.addMarker(new MarkerOptions().position(ufcg).title("UFCG"));
@@ -223,13 +252,48 @@ public class MainActivity extends AppCompatActivity
     private GoogleMap.OnMapClickListener mapClickListener = new GoogleMap.OnMapClickListener() {
         @Override
         public void onMapClick(LatLng latLng) {
-            MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.position(latLng);
-            markerOptions.title("Parada numero: " + (markers.size() + 1));
-            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-            markers.add(mMap.addMarker(markerOptions));
+            if (gradient.getVisibility() != View.VISIBLE) {
+                addMaker(latLng, true, 0);
+
+            }
         }
     };
+
+    private void addMaker(LatLng latLng, boolean save, int pos) {
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(latLng);
+        //markerOptions.title("Parada numero: " + (markers.size() + 1));
+
+
+        Bitmap.Config conf = Bitmap.Config.ARGB_8888;
+        Bitmap bmp = Bitmap.createBitmap(300, 600, conf);
+        Canvas canvas1 = new Canvas(bmp);
+
+        // paint defines the text color, stroke width and size
+        Paint color = new Paint();
+        color.setTextSize(90);
+        color.setColor(Color.BLACK);
+
+        // modify canvas
+        canvas1.drawBitmap(BitmapFactory.decodeResource(getResources(),
+                R.drawable.pinpoint), 0, 0, color);
+
+        if (save)
+            canvas1.drawText((markers.size() + 1) + "", 60, 110, color);
+        else
+            canvas1.drawText(pos + "", 60, 110, color);
+
+        bmp = Bitmap.createScaledBitmap(bmp, 100, 200, false);
+        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bmp));
+        // Specifies the anchor to be at a particular point in the marker image.
+        markerOptions.anchor(0.5f, 0.5f);
+
+        if (save)
+            markers.add(mMap.addMarker(markerOptions));
+        else
+            mMap.addMarker(markerOptions);
+
+    }
 
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -354,5 +418,25 @@ public class MainActivity extends AppCompatActivity
             //You can add here other case statements according to your requirement.
         }
     }
+
+
+    View.OnClickListener expandColapse = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            if (view.getId() == R.id.bt_expand) {
+                view.setVisibility(View.INVISIBLE);
+                btColapse.setVisibility(View.VISIBLE);
+                gradient.setVisibility(View.VISIBLE);
+                btGo.setVisibility(View.INVISIBLE);
+
+            } else if (view.getId() == R.id.bt_colapse) {
+                view.setVisibility(View.INVISIBLE);
+                btExpand.setVisibility(View.VISIBLE);
+                gradient.setVisibility(View.INVISIBLE);
+                btGo.setVisibility(View.VISIBLE);
+            }
+        }
+
+    };
 
 }

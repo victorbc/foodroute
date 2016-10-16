@@ -21,8 +21,35 @@
 
     </android.support.design.widget.AppBarLayout>
 
+
+
     <include layout="@layout/content_maps"
         android:id="@+id/include" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:srcCompat="@drawable/gradient_background"
+        android:id="@+id/gradient" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/bt_colapse"
+        app:layout_anchorGravity="bottom|right"
+        android:layout_gravity="bottom|center_horizontal"
+        android:id="@+id/bt_colapse" />
+
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/bt_expand"
+        app:layout_anchorGravity="bottom|right"
+        android:layout_gravity="top|center_horizontal"
+        android:visibility="invisible"
+        android:id="@+id/bt_expand"
+        android:layout_marginTop="50dp" />
 
     <ImageView
         android:layout_width="50dp"
@@ -33,6 +60,5 @@
         app:layout_anchorGravity="bottom|right"
         android:layout_gravity="top|left"
         android:layout_marginRight="25dp" />
-
 
 </android.support.design.widget.CoordinatorLayout>
