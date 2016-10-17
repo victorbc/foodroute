@@ -61,6 +61,10 @@ public class MainActivity extends AppCompatActivity
     private View btExpand;
     private View btColapse;
     private View gradient;
+    private Bitmap.Config conf;
+    private Bitmap bmp;
+    private Canvas canvas1;
+    private Paint color;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,6 +140,16 @@ public class MainActivity extends AppCompatActivity
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+
+        conf = Bitmap.Config.ARGB_8888;
+        bmp = Bitmap.createBitmap(100, 150, conf);
+        canvas1 = new Canvas(bmp);
+
+        // paint defines the text color, stroke width and size
+        color = new Paint();
+        color.setTextSize(30);
+        color.setColor(Color.BLACK);
     }
 
     @Override
@@ -267,7 +281,7 @@ public class MainActivity extends AppCompatActivity
     private GoogleMap.OnMapClickListener mapClickListener = new GoogleMap.OnMapClickListener() {
         @Override
         public void onMapClick(LatLng latLng) {
-            if (gradient.getVisibility() != View.VISIBLE) {
+            if (gradient.getVisibility() != View.VISIBLE && markers.size() < 20) {
                 addMaker(latLng, true, 0);
 
             }
@@ -277,28 +291,20 @@ public class MainActivity extends AppCompatActivity
     private void addMaker(LatLng latLng, boolean save, int pos) {
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
+        // markerOptions.icon(BitmapDescriptorFactory.defaultMarker());
         //markerOptions.title("Parada numero: " + (markers.size() + 1));
 
-
-        Bitmap.Config conf = Bitmap.Config.ARGB_8888;
-        Bitmap bmp = Bitmap.createBitmap(300, 600, conf);
-        Canvas canvas1 = new Canvas(bmp);
-
-        // paint defines the text color, stroke width and size
-        Paint color = new Paint();
-        color.setTextSize(90);
-        color.setColor(Color.BLACK);
 
         // modify canvas
         canvas1.drawBitmap(BitmapFactory.decodeResource(getResources(),
                 R.drawable.pinpoint), 0, 0, color);
 
         if (save)
-            canvas1.drawText((markers.size() + 1) + "", 60, 110, color);
+            canvas1.drawText((markers.size() + 1) + "", 25, 45, color);
         else
-            canvas1.drawText(pos + "", 60, 110, color);
+            canvas1.drawText(pos + "", 25, 45, color);
 
-        bmp = Bitmap.createScaledBitmap(bmp, 100, 200, false);
+        // bmp = Bitmap.createScaledBitmap(bmp, 100, 200, false);
         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bmp));
         // Specifies the anchor to be at a particular point in the marker image.
         markerOptions.anchor(0.5f, 0.5f);
